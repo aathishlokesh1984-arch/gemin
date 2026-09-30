@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comic Craft · AI Comic Story Creator</title>
+    <!-- Google Font & Font Awesome for clean styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f7f3ff 0%, #e9e2fa 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            color: #1e1a2b;
+        }
+
+        /* main card */
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 3rem;
+            box-shadow: 0 30px 50px -20px rgba(43, 20, 80, 0.25),
+                        0 0 0 2px rgba(255, 255, 255, 0.6) inset;
+            padding: 2rem 2rem 2.5rem;
+            transition: all 0.2s;
+        }
+
+        /* header section */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .logo-icon {
+            background: #1e1a2b;
+            color: white;
+            width: 58px;
+            height: 58px;
+            border-radius: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 12px 16px -8px rgba(30, 26, 43, 0.3);
+            transform: rotate(-2deg);
+            transition: transform 0.2s;
+        }
+
+        .logo-icon:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .title-group h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #1e1a2b;
+        }
+
+        .title-group h1 span {
+            background: linear-gradient(135deg, #9f5eff, #c45cff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        .title-group p {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #5a4a7a;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-group p i {
+            font-size: 0.9rem;
+            background: #e3d9ff;
+            padding: 4px 8px;
+            border-radius: 40px;
+            color: #6b3eff;
+        }
+
+        /* prompt form */
+        .prompt-section {
+            margin-top: 2rem;
+            background: white;
+            padding: 1.8rem 1.8rem 1.8rem 1.8rem;
+            border-radius: 2.2rem;
+            box-shadow: 0 8px 18px -10px rgba(0,0,0,0.08), 0 0 0 1px #f0eaff inset;
+        }
+
+        .prompt-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #1e1a2b;
+            margin-bottom: 0.8rem;
+        }
+
+        .prompt-label i {
+            color: #a06eff;
+            font-size: 1.2rem;
+        }
+
+        .prompt-box {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .prompt-input-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .prompt-input-area input {
+            flex: 1 1 300px;
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+            border: 2px solid #e3d9ff;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            background: #fefbff;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            color: #1e1a2b;
+        }
+
+        .prompt-input-area input:focus {
+            border-color: #b28aff;
+            box-shadow: 0 0 0 4px rgba(178, 138, 255, 0.15);
+        }
+
+        .prompt-input-area input::placeholder {
+            color: #a69bc2;
+            font-weight: 400;
+        }
+
+        .btn-generate {
+            background: #1e1a2b;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 14px 20px -12px rgba(30, 26, 43, 0.4);
+            white-space: nowrap;
+            justify-content: center;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-generate i {
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-generate:hover {
+            background: #322a44;
+            transform: scale(1.01);
+        }
+
+        .btn-generate:hover i {
+            transform: rotate(15deg);
+        }
+
+        .btn-generate:active {
+            transform: scale(0.98);
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 0.5rem;
+            align-items: center;
+        }
+
+        .suggestions span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #7967a0;
+            margin-right: 5px;
+        }
+
+        .suggestion-chip {
+            background: #f0eaff;
+            color: #4e3b78;
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+
+        .suggestion-chip:hover {
+            background: #e2d5ff;
+            border-color: #b99cff;
+            color: #2f2050;
+            transform: translateY(-1px);
+        }
+
+        /* output story area */
+        .story-output {
+            margin-top: 2rem;
+            background: #ffffffd9;
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.8rem 2rem 2rem;
+            border: 2px solid #f0eaff;
+            box-shadow: 0 20px 35px -20px rgba(70, 40, 120, 0.2);
+            transition: all 0.25s;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .story-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e1a2b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .story-header h2 i {
+            color: #b07eff;
+            font-size: 1.5rem;
+        }
+
+        .panel-tag {
+            background: #1e1a2b;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .story-content {
+            font-size: 1.08rem;
+            line-height: 1.7;
+            color: #252033;
+            flex: 1;
+            white-space: pre-wrap;
+            font-weight: 450;
+            padding: 0.5rem 0.2rem;
+            transition: all 0.2s;
+        }
+
+        .story-content .placeholder-text {
+            color: #a69bc2;
+            font-style: italic;
+            font-weight: 400;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 100%;
+            min-height: 180px;
+            gap: 12px;
+        }
+
+        .placeholder-text i {
+            font-size: 2.8rem;
+            opacity: 0.5;
+            color: #cbb9ff;
+        }
+
+        .story-footer {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px dashed #d9ccf0;
+            padding-top: 1rem;
+            gap: 12px;
+        }
+
+        .btn-copy {
+            background: white;
+            border: 1.5px solid #d9ccf0;
+            color: #4a3a6b;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-copy:hover {
+            background: #f6f2ff;
+            border-color: #b99cff;
+            color: #2f2050;
+        }
+
+        .btn-copy:active {
+            transform: scale(0.96);
+        }
+
+        .btn-copy i {
+            font-size: 0.9rem;
+        }
+
+        /* small badge */
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #f0eaff;
+            border-radius: 50px;
+            padding: 0.3rem 1.2rem 0.3rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6b3eff;
+            gap: 6px;
+            border: 1px solid #ddd0ff;
+            margin-left: 0.5rem;
+        }
+
+        .ai-badge i {
+            font-size: 0.7rem;
+        }
+
+        /* footer */
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #7967a0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-note i {
+            color: #b07eff;
+            margin-right: 5px;
+        }
+
+        /* responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem 1.2rem;
+                border-radius: 2rem;
+            }
+
+            .title-group h1 {
+                font-size: 1.7rem;
+            }
+
+            .btn-generate {
+                padding: 0.9rem 1.5rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .story-output {
+                padding: 1.5rem 1.2rem;
+            }
+
+            .story-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .logo-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.8rem;
+            }
+        }
+
+        /* animation for story update */
+        @keyframes fadeSlide {
+            0% { opacity: 0.4; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .story-content.fade-update {
+            animation: fadeSlide 0.35s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- header -->
+        <div class="header">
+            <div class="logo-icon">
+                <i class="fas fa-mask"></i>
+            </div>
+            <div class="title-group">
+                <h1><span>Comic Craft</span> · AI Story Creator</h1>
+                <p>
+                    <i class="fas fa-bolt"></i> 
+                    Turn a single prompt into a comic story
+                    <span class="ai-badge"><i class="fas fa-robot"></i> AI powered</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- prompt input -->
+        <div class="prompt-section">
+            <div class="prompt-label">
+                <i class="fas fa-pencil-alt"></i> 
+                <span>Your comic prompt</span>
+            </div>
+            <div class="prompt-box">
+                <div class="prompt-input-area">
+                    <input type="text" id="promptInput" placeholder="e.g. a detective cat in a cyberpunk city, or a space adventure with a lost robot..." value="a detective cat in a cyberpunk city">
+                    <button class="btn-generate" id="generateBtn">
+                        <i class="fas fa-wand-magic-sparkles"></i> Generate story
+                    </button>
+                </div>
+                <div class="suggestions">
+                    <span>Try:</span>
+                    <div class="suggestion-chip" data-prompt="a detective cat in a cyberpunk city">🐱 Detective cat</div>
+                    <div class="suggestion-chip" data-prompt="a space adventure with a lost robot and a brave girl">🤖 Lost robot</div>
+                    <div class="suggestion-chip" data-prompt="a magical library where books come alive at midnight">📚 Magic library</div>
+                    <div class="suggestion-chip" data-prompt="two rival superheroes forced to team up against a cosmic threat">🦸 Superheroes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- story output panel -->
+        <div class="story-output" id="storyPanel">
+            <div class="story-header">
+                <h2>
+                    <i class="fas fa-book-open"></i> 
+                    Your comic script
+                </h2>
+                <div class="panel-tag">Panel 1 · Scene</div>
+            </div>
+            <div class="story-content" id="storyContent">
+                <!-- placeholder / dynamic story will be injected here -->
+                <div class="placeholder-text">
+                    <i class="fas fa-comic-bubble"></i>
+                    <span>Your AI-generated comic story will appear here.<br>Enter a prompt and click <strong>Generate story</strong>.</span>
+                </div>
+            </div>
+            <div class="story-footer">
+                <button class="btn-copy" id="copyBtn">
+                    <i class="fas fa-copy"></i> Copy script
+                </button>
+            </div>
+        </div>
+
+        <!-- small footer -->
+        <div class="footer-note">
+            <span><i class="fas fa-infinity"></i> Endless comic ideas</span>
+            <span><i class="fas fa-palette"></i> Storyboards & dialogue</span>
+            <span><i class="fas fa-bolt"></i> Instant inspiration</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const promptInput = document.getElementById('promptInput');
+            const generateBtn = document.getElementById('generateBtn');
+            const storyContent = document.getElementById('storyContent');
+            const copyBtn = document.getElementById('copyBtn');
+            const suggestionChips = document.querySelectorAll('.suggestion-chip');
+
+            // --- helper to generate comic story from prompt (mock AI) ---
+            function generateComicStory(prompt) {
+                const basePrompt = prompt.trim() || 'a mysterious adventure';
+                // lowercase for consistent matching but keep original for display
+                const lowerPrompt = basePrompt.toLowerCase();
+
+                // We'll create a dynamic story based on keywords to make it feel AI-ish.
+                // Each story includes comic-style elements: panels, dialogue, captions.
+
+                // Pre-defined story templates (structured as objects with panels)
+                const storyDB = [
+                    {
+                        keywords: ['detective', 'cat', 'cyberpunk', 'city', 'noir', 'future'],
+                        panels: [
+                            { caption: "PANEL 1 — Rain-slicked neon streets. A small figure in a trench coat perches on a billboard.", 
+                              dialogue: "Whiskers (V.O.): \"The city never sleeps. That's why I drink three espressos a night.\"" },
+                            { caption: "PANEL 2 — Close-up: Detective Whiskers, a grey tabby with a cybernetic eye, scans a holographic clue.", 
+                              dialogue: "Whiskers: \"A stolen data chip… and paw prints? This case just got interesting.\"" },
+                            { caption: "PANEL 3 — A shadowy figure emerges from the fog. It's a rival hacker — a raccoon named Glitch.", 
+                              dialogue: "Glitch: \"Well, well. If it isn't the furball detective. You're on my turf.\"" },
+                            { caption: "PANEL 4 — Whiskers smirks, flipping a coin. The coin glows with encrypted data.", 
+                              dialogue: "Whiskers: \"Your turf? I just repossessed it. Wanna talk, or do we do this the hard way?\"" },
+                            { caption: "PANEL 5 — Wide shot: the two silhouettes face off against a backdrop of flying cars and holograms.", 
+                              dialogue: "Caption: Next issue: 'Claws and Code' — the showdown begins!" }
+                        ]
+                    },
+                    {
+                        keywords: ['space', 'robot', 'lost', 'girl', 'adventure', 'galaxy', 'starship'],
+                        panels: [
+                            { caption: "PANEL 1 — The starship 'Stardust' drifts near a purple nebula. Inside, a young girl named Lila stares at a flickering console.", 
+                              dialogue: "Lila: \"Come on, Unit-7. Where are you?\" " },
+                            { caption: "PANEL 2 — Flashback: a small rusty robot, Unit-7, gets swept away by a solar wind during a repair mission.", 
+                              dialogue: "Unit-7 (distorted): \"Lila… I’ll find a way back. I promise.\"" },
+                            { caption: "PANEL 3 — Present: Lila pilots a shuttle through an asteroid field, following a faint signal.", 
+                              dialogue: "Lila: \"There you are. Hang on, buddy — I'm coming.\"" },
+                            { caption: "PANEL 4 — She finds Unit-7 on a tiny moon, its circuits sparking but its eye lights up.", 
+                              dialogue: "Unit-7: \"You came… across half a galaxy.\" Lila: \"You'd do the same for me.\"" },
+                            { caption: "PANEL 5 — They hug, stars glowing behind them. A new adventure begins.", 
+                              dialogue: "Caption: Friendship is the best kind of gravity." }
+                        ]
+                    },
+                    {
+                        keywords: ['magic', 'library', 'books', 'midnight', 'fantasy', 'alive'],
+                        panels: [
+                            { caption: "PANEL 1 — Midnight. The old library's books begin to rustle. A librarian, Mira, watches in awe.", 
+                              dialogue: "Mira: \"I knew the stories were real… but not like this.\"" },
+                            { caption: "PANEL 2 — A dragon from a fantasy novel swoops down from a shelf, shrinking as it lands.", 
+                              dialogue: "Dragon: \"We need a new hero. The plot holes are destroying our worlds!\"" },
+                            { caption: "PANEL 3 — Mira grabs a glowing pen and steps into a pop-up book portal.", 
+                              dialogue: "Mira: \"Then let's rewrite the ending.\"" },
+                            { caption: "PANEL 4 — She faces a swirling void of missing sentences, typing furiously on a floating typewriter.", 
+                              dialogue: "Mira: \"Every story deserves a chance to be told.\"" },
+                            { caption: "PANEL 5 — Dawn breaks. The books settle down, and a new chapter appears on the shelf.", 
+                              dialogue: "Caption: The end? Not even close." }
+                        ]
+                    },
+                    {
+                        keywords: ['superhero', 'hero', 'villain', 'team', 'cosmic', 'threat', 'powers'],
+                        panels: [
+                            { caption: "PANEL 1 — Two heroes, Ember (fire) and Frostbite (ice), clash mid-air above the city.", 
+                              dialogue: "Ember: \"You're reckless!\" Frostbite: \"And you're too slow!\"" },
+                            { caption: "PANEL 2 — A giant cosmic entity looms, draining the city's energy.", 
+                              dialogue: "Entity: \"ALL POWERS WILL BE CONSUMED.\"" },
+                            { caption: "PANEL 3 — Ember and Frostbite exchange a look. They nod.", 
+                              dialogue: "Frostbite: \"Truce?\" Ember: \"Truce.\"" },
+                            { caption: "PANEL 4 — They combine their powers into a supernova blast, pushing the entity back.", 
+                              dialogue: "Both: \"You're not taking our city!\"" },
+                            { caption: "PANEL 5 — After the battle, they sit on a rooftop, exhausted but smiling.", 
+                              dialogue: "Ember: \"Same time next week?\" Frostbite: \"Only if you bring snacks.\"" }
+                        ]
+                    }
+                ];
+
+                // find a matching story set
+                let selectedStory = null;
+                for (let story of storyDB) {
+                    if (story.keywords.some(kw => lowerPrompt.includes(kw))) {
+                        selectedStory = story;
+                        break;
+                    }
+                }
+
+                // Fallback: generate a generic but nice comic script based on prompt words
+                if (!selectedStory) {
+                    // Extract some nouns/words from prompt to personalize
+                    const words = basePrompt.split(/\s+/).filter(w => w.length > 2).slice(0, 3);
+                    const subject = words.length ? words.join(' ') : 'mysterious hero';
+                    const capitalized = subject.charAt(0).toUpperCase() + subject.slice(1);
+                    selectedStory = {
+                        panels: [
+                            { caption: `PANEL 1 — Our story begins with ${basePrompt}. The world is full of possibility.`, 
+                              dialogue: `Narrator: "Every great comic starts with a single spark."` },
+                            { caption: `PANEL 2 — We meet our protagonist, drawn to the mystery of ${subject}.`, 
+                              dialogue: `Hero: "I never asked for this… but I'm the only one who can do it."` },
+                            { caption: `PANEL 3 — A challenge appears! The stakes are raised.`, 
+                              dialogue: `Villain: "You'll never stop me!" Hero: "Wanna bet?"` },
+                            { caption: `PANEL 4 — With quick thinking and a bit of luck, our hero turns the tide.`, 
+                              dialogue: `Hero: "Sometimes the smallest idea makes the biggest difference."` },
+                            { caption: `PANEL 5 — The day is saved, but a new clue hints at a larger adventure.`, 
+                              dialogue: `Caption: To be continued…` }
+                        ]
+                    };
+                }
+
+                // Build the final string with nice formatting
+                let storyText = `✦ COMIC CRAFT — AI SCRIPT ✦\n`;
+                storyText += `Prompt: "${basePrompt}"\n`;
+                storyText += `— — — — — — — — — — — — — — — — — — — —\n\n`;
+                
+                selectedStory.panels.forEach((panel, idx) => {
+                    storyText += `${panel.caption}\n`;
+                    storyText += `💬 ${panel.dialogue}\n\n`;
+                });
+
+                storyText += `— — — — — — — — — — — — — — — — — — — —\n`;
+                storyText += `✏️ Created with Comic Craft · AI story engine`;
+                return storyText;
+            }
+
+            // --- update story display ---
+            function updateStory(promptText) {
+                const story = generateComicStory(promptText);
+                // replace content with formatted story
+                storyContent.innerHTML = ''; // clear
+                const pre = document.createElement('div');
+                pre.style.whiteSpace = 'pre-wrap';
+                pre.style.fontFamily = "'Inter', sans-serif";
+                pre.textContent = story;
+                storyContent.appendChild(pre);
+                // add fade animation
+                storyContent.classList.add('fade-update');
+                setTimeout(() => storyContent.classList.remove('fade-update'), 350);
+            }
+
+            // --- show placeholder message (if needed) ---
+            function showPlaceholder() {
+                storyContent.innerHTML = `
+                    <div class="placeholder-text">
+                        <i class="fas fa-comic-bubble"></i>
+                        <span>Your AI-generated comic story will appear here.<br>Enter a prompt and click <strong>Generate story</strong>.</span>
+                    </div>
+                `;
+            }
+
+            // --- generate button handler ---
+            generateBtn.addEventListener('click', () => {
+                const prompt = promptInput.value.trim();
+                if (!prompt) {
+                    // If empty, gently highlight the input and use a default prompt
+                    promptInput.style.borderColor = '#ff8a8a';
+                    promptInput.focus();
+                    setTimeout(() => promptInput.style.borderColor = '#e3d9ff', 800);
+                    // Use a default to still create something fun
+                    updateStory('a mysterious hero in a neon city');
+                    promptInput.value = 'a mysterious hero in a neon city';
+                    return;
+                }
+                updateStory(prompt);
+            });
+
+            // --- suggestion chips ---
+            suggestionChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const prompt = chip.getAttribute('data-prompt');
+                    promptInput.value = prompt;
+                    updateStory(prompt);
+                    // subtle focus
+                    promptInput.focus();
+                });
+            });
+
+            // --- copy button ---
+            copyBtn.addEventListener('click', () => {
+                const textToCopy = storyContent.innerText;
+                if (!textToCopy || textToCopy.includes('Your AI-generated comic story will appear here')) {
+                    // if placeholder, copy a friendly message
+                    navigator.clipboard.writeText('✨ Generate a comic story first!').then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        setTimeout(() => copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy script', 2000);
+                    }).catch(() => alert('Press Ctrl+C to copy'));
+                    return;
+                }
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy script', 2000);
+                }).catch(() => {
+                    alert('Could not copy automatically. Please select and copy manually.');
+                });
+            });
+
+            // --- initial story on page load (using the pre-filled value) ---
+            window.addEventListener('DOMContentLoaded', () => {
+                const initialPrompt = promptInput.value.trim() || 'a detective cat in a cyberpunk city';
+                updateStory(initialPrompt);
+            });
+
+            // also allow pressing Enter in input field
+            promptInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    generateBtn.click();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
